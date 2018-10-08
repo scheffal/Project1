@@ -4,6 +4,7 @@ import java.util.*;
 import java.text.*;
 import java.lang.*;
 import javax.swing.*;
+
 class FTPClient { 
 
     public static void main(String argv[]) throws Exception 
@@ -44,37 +45,71 @@ class FTPClient {
         	{
 	    		int port = port1 + 2;
 	    		outToServer.writeBytes (port + " " + sentence + " " + '\n');
-	    
+	
            	 	ServerSocket welcomeData = new ServerSocket(port);
 	   	 	Socket dataSocket =welcomeData.accept(); 
 
- 	   	 	DataInputStream inData = new DataInputStream(new BufferedInputStream (dataSocket.getInputStream()));
-           	 while(notEnd) 
-            	{
+ 	   	 	DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+			
+			//TODO Fix - client socket closes before message read
+			Thread.sleep(1000);
+		       	
+			while(notEnd) 
+            		{
+				if(inData.available() <= 0)
+				{	
+					notEnd = false;
+				}else{
+                			modifiedSentence = inData.readUTF();
 
-			if(inData.available() <= 0)
-			{	
-				notEnd = false;
-			}else{
-                		modifiedSentence = inData.readUTF();
-               	 	
-				System.out.println(modifiedSentence);
-			}
+					System.out.println(modifiedSentence);
+				}	
 			       
-            	}
+            		}
 	
-
-	 	welcomeData.close();
-	 	dataSocket.close();
-	 	System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
+			inData.close();
+	 		welcomeData.close();
+	 		dataSocket.close();
+	 		System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
 
         	}
          	else if(sentence.startsWith("retr: "))
         	{
-			//....................................................
-			//
-	
-		
+			int port = port1 + 2;
+			
+			StringTokenizer tokenRetr = new StringTokenizer(sentence);
+			String fileName = tokenRetr.nextToken();
+			fileName = tokenRetr.nextToken();
+			System.out.println(fileName);
+			
+			outToServer.writeBytes(port + " " + sentence + " " + fileName + " " + '\n');
+
+
+			ServerSocket welcomeData = new ServerSocket(port);
+			Socket dataSocket = welcomeData.accept();
+
+			DataInputStream inData = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
+
+
+			FileOutputStream fos = new FileOutputStream("test2.txt");
+		        BufferedOutputStream bufOut = new BufferedOutputStream(fos);
+
+			int bytesRead = 0;
+			byte[] byteArray = new byte[1024];
+			
+			if(inData != null)
+			{
+				bytesRead = inData.read(byteArray, 0, byteArray.length);
+
+			}
+
+			bufOut.write(byteArray, 0, bytesRead);
+				
+			bufOut.close();
+			inData.close();
+			welcomeData.close();
+
+
 		}else{
 			//TODO add more commands
 		}
