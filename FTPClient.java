@@ -80,16 +80,13 @@ class FTPClient {
 			StringTokenizer tokenRetr = new StringTokenizer(sentence);
 			String fileName = tokenRetr.nextToken();
 			fileName = tokenRetr.nextToken();
-			System.out.println(fileName);
 			
 			outToServer.writeBytes(port + " " + sentence + " " + fileName + " " + '\n');
-
 
 			ServerSocket welcomeData = new ServerSocket(port);
 			Socket dataSocket = welcomeData.accept();
 
-			DataInputStream inData = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
-
+			DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
 
 			FileOutputStream fos = new FileOutputStream("test2.txt");
 		        BufferedOutputStream bufOut = new BufferedOutputStream(fos);
@@ -100,7 +97,6 @@ class FTPClient {
 			if(inData != null)
 			{
 				bytesRead = inData.read(byteArray, 0, byteArray.length);
-
 			}
 
 			bufOut.write(byteArray, 0, bytesRead);

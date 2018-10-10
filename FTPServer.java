@@ -54,25 +54,27 @@ public class FTPServer{
                 if(clientCommand.equals("retr:"))
                 {
                 	Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
-		       //DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
+		        //DataOutputStream dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
 
-			BufferedOutputStream dataOutToClient = new BufferedOutputStream(connectionSocket.getOutputStream());
+			OutputStreamWriter dataOutToClient = new OutputStreamWriter(dataSocket.getOutputStream(), "UTF-8");
 
 		        String fileName = tokens.nextToken();
 
-			//if(outToClient != null)
-		//	{
+			
 				File file = new File(fileName);
-				byte[] byteArray = new byte[(int) file.length()];
+				BufferedReader read = new BufferedReader(new FileReader(file));
 
-				FileInputStream fis = new FileInputStream(file);
-				fis.read(byteArray, 0, byteArray.length);
+				String str;
 
-				System.out.println(byteArray);
-				dataOutToClient.write(byteArray, 0, byteArray.length);
+				while((str = read.readLine()) != null)
+				{
+					System.out.println(str);
+					dataOutToClient.write(str);
+				}
+				
 
 				System.out.println("File Sent: " + fileName);	
-		//	}
+			
 
 		        dataOutToClient.close();
 			dataSocket.close();
