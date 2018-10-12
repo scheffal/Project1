@@ -17,6 +17,7 @@ class FTPClient {
 	String statusCode;
 	boolean clientgo = true;
 	int port1;   
+	int port2;
 	
 	BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in)); 
         sentence = inFromUser.readLine();
@@ -27,6 +28,7 @@ class FTPClient {
 	String serverName = tokens.nextToken(); // pass the connect command
 	serverName = tokens.nextToken();
 	port1 = Integer.parseInt(tokens.nextToken());
+	port2 = Integer.parseInt(tokens.nextToken());
         System.out.println("You are connected to " + serverName);
         
 	Socket ControlSocket= new Socket(serverName, port1);
@@ -43,7 +45,7 @@ class FTPClient {
 	   
         	if(sentence.equals("list:"))
         	{
-	    		int port = port1 + 2;
+	    		int port = port2 + 2;
 	    		outToServer.writeBytes (port + " " + sentence + " " + '\n');
 	
            	 	ServerSocket welcomeData = new ServerSocket(port);
@@ -75,18 +77,21 @@ class FTPClient {
         	}
          	else if(sentence.startsWith("retr: "))
         	{
-			int port = port1 + 2;
+			int port = port2 + 2;
 			
 			StringTokenizer tokenRetr = new StringTokenizer(sentence);
 			String fileName = tokenRetr.nextToken();
 			fileName = tokenRetr.nextToken();
+			System.out.println(fileName);
 			
 			outToServer.writeBytes(port + " " + sentence + " " + fileName + " " + '\n');
+
 
 			ServerSocket welcomeData = new ServerSocket(port);
 			Socket dataSocket = welcomeData.accept();
 
-			DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
+			DataInputStream inData = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
+
 
 			FileOutputStream fos = new FileOutputStream("test2.txt");
 		        BufferedOutputStream bufOut = new BufferedOutputStream(fos);
@@ -97,6 +102,7 @@ class FTPClient {
 			if(inData != null)
 			{
 				bytesRead = inData.read(byteArray, 0, byteArray.length);
+
 			}
 
 			bufOut.write(byteArray, 0, bytesRead);
@@ -112,4 +118,4 @@ class FTPClient {
         }
     }
 }
-}	
+}
