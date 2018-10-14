@@ -90,10 +90,10 @@ class FTPClient {
 			ServerSocket welcomeData = new ServerSocket(port);
 			Socket dataSocket = welcomeData.accept();
 
-			DataInputStream inData = new DataInputStream(new BufferedInputStream(ControlSocket.getInputStream()));
+			DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
 
 
-			FileOutputStream fos = new FileOutputStream("test2.txt");
+			FileOutputStream fos = new FileOutputStream(fileName);
 		        BufferedOutputStream bufOut = new BufferedOutputStream(fos);
 
 			int bytesRead = 0;
@@ -110,10 +110,58 @@ class FTPClient {
 			bufOut.close();
 			inData.close();
 			welcomeData.close();
+	
+	 		System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
 
 
-		}else{
-			//TODO add more commands
+		}else if(sentence.startsWith("stor: "))
+		{
+			int port = port2 + 2;
+
+			StringTokenizer tokenStor = new StringTokenizer(sentence);
+			String fileStor = tokenStor.nextToken();
+			fileStor = tokenStor.nextToken();
+			System.out.println(fileStor);
+
+			outToServer.writeBytes(port + " " + sentence + " " + fileStor + " " + "\n");
+
+			ServerSocket welcomeData = new ServerSocket(port);
+			Socket dataSocket = welcomeData.accept();
+
+			OutputStreamWriter dataOutToServer = new OutputStreamWriter(dataSocket.getOutputStream(), "UTF-8");
+
+			File file = new File(fileStor);
+			BufferedReader read = new BufferedReader(new FileReader(file));
+			String str;
+			while((str = read.readLine()) != null)
+			{
+				System.out.println(str);
+				dataOutToServer.write(str);
+			}		
+			
+			dataOutToServer.close();
+			read.close();
+			//inData.close();
+			welcomeData.close();
+			
+	 		System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
+
+
+		}else if(sentence.startsWith("close"))
+		{
+			int port = port2 + 2;
+			outToServer.writeBytes(port + " " + sentence + "\n");
+
+			
+			inFromUser.close();
+			outToServer.close();
+			inFromServer.close();
+			ControlSocket.close();
+			System.out.println("Closed");
+			System.exit(0);
+		}
+		else{
+			System.out.println("Invalid command. Options\n retr: file.txt || stor: file.txt || close");
 		}
         }
     }
