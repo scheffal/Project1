@@ -97,17 +97,17 @@ class FTPClient {
 	   
         	if(sentence.equals("list:"))
         	{
+				ServerSocket welcomeData = new ServerSocket(port2);
 	  		//Send request over control connection
 	    		outToServer.writeBytes (port2 + " " + sentence + " " + '\n');
 	
 			//Create socket on client side for data connection
-           	 	ServerSocket welcomeData = new ServerSocket(port2);
+           	 	
 	   	 	Socket dataSocket = welcomeData.accept(); 
 
  	   	 	DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
 			
-			//TODO Fix - client socket closes before message read
-			Thread.sleep(1000);
+			while(inData.available() <=0);
 		       	
 			//Read in data from server
 			while(notEnd) 
@@ -116,7 +116,7 @@ class FTPClient {
 				{	
 					notEnd = false;
 				}else{
-                			modifiedSentence = inData.readUTF();
+                	modifiedSentence = inData.readUTF();
 
 					System.out.println(modifiedSentence);
 				}	
