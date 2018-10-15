@@ -40,7 +40,7 @@ public class FTPServer{
             {
 		//Wait for connection from client
                 Socket connectionSocket = welcomeSocket.accept();
-                
+
 		//Create a thread for each client
                 ClientHandler handler = new ClientHandler(connectionSocket);
                 handler.start();
@@ -80,18 +80,19 @@ class ClientHandler extends Thread{
 			do{
 				//Read line in from client
 				fromClient = inFromClient.readLine();
-            
+
 				//Get command
             			StringTokenizer tokens = new StringTokenizer(fromClient);
-            			frstln = tokens.nextToken();
+				frstln = tokens.nextToken();
             			port = Integer.parseInt(frstln);
             			clientCommand = tokens.nextToken();
-           	
+           
         			if(clientCommand.equals("list:"))
             			{ 
 					//Create socket on server side
                 			Socket dataSocket = new Socket(connectionSocket.getInetAddress(), port);
 
+			
 					//Create output stream to client
                 			DataOutputStream  dataOutToClient = new DataOutputStream(dataSocket.getOutputStream());
 					
@@ -122,7 +123,7 @@ class ClientHandler extends Thread{
 	
 					//Get filename
 			        	String fileName = tokens.nextToken();
-
+					
 					try{
 						//Create file object
 						File file = new File(fileName);
@@ -133,8 +134,7 @@ class ClientHandler extends Thread{
 
 						//Read from file and write out to client
 						while((str = read.readLine()) != null)
-						{
-							System.out.println(str);
+						{	
 							dataOutToClient.write(str);
 						}
 				
@@ -159,14 +159,13 @@ class ClientHandler extends Thread{
 
 					//Get file name
 		  			String fileStor = tokens.nextToken();
-		  			System.out.println(fileStor);
 
 					//Create stream to write to file
 		  			FileOutputStream fos = new FileOutputStream(fileStor);
 			  		BufferedOutputStream bufOut = new BufferedOutputStream(fos);
 	
 			  		int bytesRead = 0;
-			  		byte[] byteArray = new byte[1024];
+			  		byte[] byteArray = new byte[4096];
 
 					//Read in from client
 		  			if(inData != null)
@@ -174,8 +173,12 @@ class ClientHandler extends Thread{
 			  			bytesRead = inData.read(byteArray, 0, byteArray.length);
 		  			}
 
-					//Write to file
-		  			bufOut.write(byteArray, 0, bytesRead);
+					//Write only if file is not empty
+					if(bytesRead > 0)
+					{
+						//Write to file
+		  				bufOut.write(byteArray, 0, bytesRead);
+					}
 
 					System.out.println(fileStor + " saved");
 

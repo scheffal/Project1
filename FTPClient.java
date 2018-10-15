@@ -152,7 +152,7 @@ class FTPClient {
 		        BufferedOutputStream bufOut = new BufferedOutputStream(fos);
 
 			int bytesRead = 0;
-			byte[] byteArray = new byte[1024];
+			byte[] byteArray = new byte[4096];
 			
 			if(inData != null)
 			{
@@ -160,9 +160,14 @@ class FTPClient {
 
 			}
 
-			//Write to file
-			bufOut.write(byteArray, 0, bytesRead);
-				
+			
+			//Write only if file not emtpy
+			if(bytesRead > 0)
+			{
+				//Write to file
+				bufOut.write(byteArray, 0, bytesRead);
+			}
+
 			//Close streams and socket
 			bufOut.close();
 			inData.close();
