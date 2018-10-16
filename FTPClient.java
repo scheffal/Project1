@@ -174,7 +174,7 @@ class FTPClient {
 			welcomeData.close();
 			dataSocket.close();
 
-	 		System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
+	 		System.out.println("\nWhat would you like to do next: \n list: || retr: file.txt ||stor: file.txt  || close");
 
 
 		}else if(sentence.startsWith("stor: "))
@@ -219,7 +219,7 @@ class FTPClient {
 			welcomeData.close();
 			dataSocket.close();
 			
-	 		System.out.println("\nWhat would you like to do next: \n retr: file.txt ||stor: file.txt  || close");
+	 		System.out.println("\nWhat would you like to do next: \n list: || retr: file.txt ||stor: file.txt  || close");
 
 
 		}else if(sentence.startsWith("close"))
@@ -238,7 +238,7 @@ class FTPClient {
 			System.exit(0);
 		}
 		else{
-			System.out.println("Invalid command. Options\n retr: file.txt || stor: file.txt || close");
+			System.out.println("Invalid command. Options\n list: || retr: file.txt || stor: file.txt || close");
 		}
         }
     }
