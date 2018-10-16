@@ -108,7 +108,9 @@ class FTPClient {
  	   	 	DataInputStream inData = new DataInputStream(new BufferedInputStream(dataSocket.getInputStream()));
 			
 			while(inData.available() <=0);
-		       	
+		      //Small delay for synchronization 
+			Thread.sleep(500);
+
 			//Read in data from server
 			while(notEnd) 
             		{
@@ -122,7 +124,9 @@ class FTPClient {
 				}	
 			       
             		}
-	
+			//Set value of notEnd back to true
+			notEnd = true;	
+
 			//Close all streams and sockets
 			inData.close();
 	 		welcomeData.close();
